@@ -1,0 +1,27 @@
+{
+  "name": "sosyopolitik-graphql-api",
+  "version": "1.0.0",
+  "description": "This is a api of Sosyopolitik website",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon src/index.js --ext js,graphql --exec babel-node",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "get-schema": "graphql get-schema -p prisma"
+  },
+  "author": "weburus",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/node": "^7.4.5",
+    "@babel/plugin-syntax-object-rest-spread": "^7.2.0",
+    "@babel/preset-env": "^7.4.5",
+    "nodemon": "^1.17.5"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "graphql-cli": "^3.0.11",
+    "graphql-yoga": "^1.17.4",
+    "jsonwebtoken": "^8.5.1",
+    "prisma-binding": "^2.3.11"
+  }
+}

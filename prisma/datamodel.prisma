@@ -1,0 +1,137 @@
+type User {
+  id: ID! @id
+  username: String! @unique
+  name: String!
+  surname: String!
+  email: String! @unique
+  password: String!
+  userRole: Int!
+  follows: [User!]! @relation(name:"UserToUser")
+  followers: [User!]! @relation(name:"UserToUser")
+  comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)
+  discusComments: [DisqusComment!]! @relation(name: "DisqusCommentToUser",onDelete:CASCADE)
+  discussions: [Disqus!]! @relation(name:"DisqusToUser", onDelete: CASCADE)
+  posts: [Post]! @relation(name: "PostToUser", onDelete: CASCADE)
+  status: String! #banned or üye
+  isActive: Boolean!
+  profileImage: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Post {
+  id: ID! @id
+  url: String!
+  title: String!
+  imageUrl: String
+  body: String!
+  description: String!
+  creator: User!  @relation(name: "PostToUser", onDelete: SET_NULL)
+  type: String! #story, post, news, 
+  likes: [Like!] @relation(name: "PostToLike", onDelete: CASCADE)
+  comments: [Comment!]! @relation(name: "CommentToPost", onDelete: CASCADE)
+  category: Category! @relation(name: "CategoryToPost",onDelete: SET_NULL)
+  status: String! #working, banned
+  isActive: Boolean!
+  isAccess: Boolean! #is Accessable from home page ?
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Comment {
+  id: ID! @id
+  text: String!
+  user: User! @relation(name:"CommentToUser", onDelete:CASCADE)
+  post: Post! @relation(name:"CommentToPost",onDelete:CASCADE)
+  status: String! #works, banned
+  likes:[LikeMessage!]! @relation(name: "LikeMessageToComment", onDelete: CASCADE)
+  replies: [CommentReplyMessage]! @relation(name: "CommentReplyMessageToComment", onDelete:CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+type CommentReplyMessage {
+  id: ID! @id
+  text: String!
+  comment: Comment! @relation(name: "CommentReplyMessageToComment", onDelete:SET_NULL)
+  user: User! 
+  likes:[LikeReplyMessage!] @relation(name: "LikeReplyMessageToCommentReplyMessage", onDelete:CASCADE)
+  status: String! #works, banned
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Like {
+  id:ID! @id
+  post: Post! @relation(name: "PostToLike", onDelete:SET_NULL)
+  user: User!
+}
+type LikeMessage {
+  id: ID! @id
+  comment: Comment! @relation(name: "LikeMessageToComment", onDelete:SET_NULL)
+  user: User!
+}
+type LikeReplyMessage {
+  id: ID! @id
+  replyComment: CommentReplyMessage! @relation(name:"LikeReplyMessageToCommentReplyMessage",onDelete: SET_NULL)
+  user: User!
+}
+
+type Disqus {
+  id: ID! @id
+  url: String!
+  title: String!
+  description: String!
+  creator: User! @relation(name: "DisqusToUser", onDelete: SET_NULL )
+  comments: [DisqusComment!]! @relation(name: "DisqusToDisqusComment", onDelete: CASCADE )
+  isActive: Boolean!
+  status: String! #opened or closed
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
+}
+type DisqusComment {
+  id: ID! @id
+  text: String!
+  disqus: Disqus! @relation(name: "DisqusToDisqusComment", onDelete: SET_NULL )
+  likes: [DisqusMessageLike!]! @relation(name:"DisqusCommentToDisqusMessageLike",onDelete: CASCADE)
+  user: User! @relation(name: "DisqusCommentToUser",onDelete: SET_NULL)
+  replies: [DReplyComment] @relation(name:"DisqusCommentToDReplyComment",onDelete:CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+
+}
+type DReplyComment {
+  id: ID! @id
+  text: String!
+  comment: DisqusComment! @relation(name:"DisqusCommentToDReplyComment",onDelete:SET_NULL)
+  likes: [DisqusReplyMessageLike!]! @relation(name:"DReplyCommentToDisqusReplyMessageLike",onDelete: CASCADE)
+  user: User!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+type DisqusMessageLike {
+  id:ID! @id
+  discus: DisqusComment! @relation(name:"DisqusCommentToDisqusMessageLike",onDelete: SET_NULL)
+  user: User!
+}
+type DisqusReplyMessageLike {
+  id:ID! @id
+  discusReply: DReplyComment! @relation(name:"DReplyCommentToDisqusReplyMessageLike",onDelete: SET_NULL)
+  user: User!
+}
+
+
+type Category {
+  id:ID! @id
+  url: String!
+  title: String! 
+  description: String!
+  posts: [Post!]!  @relation(name: "CategoryToPost",onDelete: SET_NULL)
+  subCategories: [SubCategories!]!  @relation(name: "CategoryToSubCategory",onDelete: CASCADE)
+}
+
+type SubCategories {
+  id:ID! @id
+  title:String!
+  description: String
+  category: Category!  @relation(name: "CategoryToSubCategory",onDelete: SET_NULL)
+}
